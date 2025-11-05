@@ -17,23 +17,33 @@
     <Label text="Liczba obiektów:"
            GridPane.rowIndex="0" GridPane.columnIndex="0"
            style="-fx-text-fill: #D3DAD9; -fx-font-size: 16px;"/>
-    <TextField fx:id="txtLiczbaObiektow" promptText="np. 10"
+    <TextField fx:id="txtLiczbaObiektow"
+               promptText="np. 5"
+               onKeyReleased="#onNumberChange"
+               prefWidth="250"
                style="-fx-background-color: #334756; -fx-text-fill: white; -fx-font-size: 14px;"
-               styleClass="form-control"
                GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
     <Label text="Czasy naprawy:"
            GridPane.rowIndex="1" GridPane.columnIndex="0"
            style="-fx-text-fill: #D3DAD9; -fx-font-size: 16px;"/>
-    <TextField fx:id="txtCzasyNaprawy" promptText="np. 0.08, 0.15, 0.3"
-               style="-fx-background-color: #334756; -fx-text-fill: white; -fx-font-size: 14px;"
-               styleClass="form-control"
-               GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+    <ScrollPane fitToWidth="true"
+                maxHeight="200"
+                stylesheets="@scrollbar.css"
+                style="-fx-background-color: transparent; -fx-background: transparent;"
+                GridPane.rowIndex="1" GridPane.columnIndex="1"
+                hbarPolicy="NEVER">
+
+        <GridPane fx:id="gridCzasy"
+                  hgap="5" vgap="5"
+                  GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+    </ScrollPane>
 
     <Label text="Poziom istotności (α):"
            GridPane.rowIndex="2" GridPane.columnIndex="0"
            style="-fx-text-fill: #D3DAD9; -fx-font-size: 16px;"/>
     <TextField fx:id="txtAlfa" promptText="np. 0.05"
+               prefWidth="250"
                style="-fx-background-color: #334756; -fx-text-fill: white; -fx-font-size: 14px;"
                styleClass="form-control"
                GridPane.rowIndex="2" GridPane.columnIndex="1"/>

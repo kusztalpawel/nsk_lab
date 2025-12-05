@@ -47,28 +47,131 @@ public class Controller {
             {0.999999981},
     };
 
-    @FXML
-    private TextField txtLiczbaObiektow;
+    private static final double[][] QUANTILE_TABLE = {
+            {0.90000, 0.95000, 0.97500, 0.99000, 0.99500},
+            {0.68377, 0.77639, 0.84189, 0.90000, 0.92929},
+            {0.56481, 0.63604, 0.70760, 0.78456, 0.82900},
+            {0.49265, 0.56522, 0.62394, 0.68887, 0.73424},
+            {0.44698, 0.50945, 0.56328, 0.62718, 0.66853},
+            {0.41037, 0.46799, 0.51926, 0.57741, 0.61661},
+            {0.38148, 0.43607, 0.48342, 0.53844, 0.57581},
+            {0.35831, 0.40962, 0.45427, 0.50654, 0.54179},
+            {0.33910, 0.38746, 0.43001, 0.47960, 0.51332},
+            {0.32260, 0.36866, 0.40925, 0.45662, 0.48893},
+            {0.30829, 0.35242, 0.39122, 0.43670, 0.46770},
+            {0.29577, 0.33815, 0.37543, 0.41918, 0.44905},
+            {0.28470, 0.32549, 0.36143, 0.40362, 0.43247},
+            {0.27481, 0.31417, 0.34890, 0.38970, 0.41762},
+            {0.26588, 0.30397, 0.33760, 0.37713, 0.40420},
+            {0.25778, 0.29472, 0.32733, 0.36571, 0.39201},
+            {0.25039, 0.28627, 0.31796, 0.35528, 0.38086},
+            {0.24360, 0.27851, 0.30936, 0.34569, 0.37062},
+            {0.23735, 0.27136, 0.30143, 0.33685, 0.36117},
+            {0.23156, 0.26473, 0.29408, 0.32866, 0.35241},
+            {0.22617, 0.25858, 0.28724, 0.32104, 0.34427},
+            {0.22115, 0.25283, 0.28087, 0.31394, 0.33666},
+            {0.21645, 0.24746, 0.27490, 0.30738, 0.32958},
+            {0.21205, 0.24242, 0.26931, 0.30104, 0.32286},
+            {0.20790, 0.23768, 0.26404, 0.29516, 0.31657},
+            {0.20399, 0.23320, 0.25907, 0.28962, 0.31064},
+            {0.20030, 0.22898, 0.25438, 0.28438, 0.30502},
+            {0.19680, 0.22497, 0.24993, 0.27942, 0.29971},
+            {0.19348, 0.22117, 0.24571, 0.27471, 0.29466},
+            {0.19032, 0.21756, 0.24170, 0.27023, 0.28987},
+            {0.18732, 0.21412, 0.23788, 0.26596, 0.28524},
+            {0.18445, 0.21085, 0.23424, 0.26189, 0.28094},
+            {0.18171, 0.20771, 0.23076, 0.25801, 0.27677},
+            {0.17909, 0.20472, 0.22743, 0.25429, 0.27279},
+            {0.17659, 0.20185, 0.22425, 0.25073, 0.26897},
+            {0.17418, 0.19910, 0.22119, 0.24732, 0.26532},
+            {0.17188, 0.19646, 0.21826, 0.24404, 0.26180},
+            {0.16966, 0.19392, 0.21544, 0.24089, 0.25843},
+            {0.16753, 0.19148, 0.21273, 0.23786, 0.25518},
+            {0.16547, 0.18913, 0.21012, 0.23494, 0.25205},
+            {0.16349, 0.18687, 0.20760, 0.23213, 0.24904},
+            {0.16158, 0.18468, 0.20517, 0.22941, 0.24613},
+            {0.15974, 0.18257, 0.20283, 0.22679, 0.24332},
+            {0.15796, 0.18053, 0.20056, 0.22426, 0.24060},
+            {0.15623, 0.17856, 0.19837, 0.22181, 0.23798},
+            {0.15457, 0.17665, 0.19625, 0.21944, 0.23544},
+            {0.15295, 0.17481, 0.19420, 0.21715, 0.23298},
+            {0.15139, 0.17302, 0.19221, 0.21493, 0.23059},
+            {0.14987, 0.17128, 0.19028, 0.21277, 0.22828},
+            {0.14840, 0.16959, 0.18841, 0.21068, 0.22604},
+            {0.14697, 0.16796, 0.18659, 0.20864, 0.22386},
+            {0.14558, 0.16637, 0.18482, 0.20667, 0.22174},
+            {0.14423, 0.16483, 0.18311, 0.20475, 0.21968},
+            {0.14292, 0.16332, 0.18144, 0.20289, 0.21768},
+            {0.14164, 0.16186, 0.17981, 0.20107, 0.21574},
+            {0.14040, 0.16044, 0.17823, 0.19930, 0.21384},
+            {0.13919, 0.15906, 0.17669, 0.19758, 0.21199},
+            {0.13801, 0.15771, 0.17519, 0.19590, 0.21019},
+            {0.13686, 0.15639, 0.17373, 0.19427, 0.20844},
+            {0.13573, 0.15511, 0.17231, 0.19267, 0.20673},
+            {0.13464, 0.15385, 0.17091, 0.19112, 0.20506},
+            {0.13357, 0.15263, 0.16956, 0.18960, 0.20343},
+            {0.13253, 0.15144, 0.16823, 0.18812, 0.20184},
+            {0.13151, 0.15027, 0.16693, 0.18567, 0.20029},
+            {0.13052, 0.14913, 0.16567, 0.18525, 0.19887},
+            {0.12954, 0.14802, 0.16443, 0.18387, 0.19729},
+            {0.12859, 0.14693, 0.16322, 0.18252, 0.19584},
+            {0.12766, 0.14587, 0.16204, 0.18119, 0.19442},
+            {0.12675, 0.14483, 0.16088, 0.17990, 0.19303},
+            {0.12586, 0.14381, 0.15975, 0.17863, 0.19167},
+            {0.12499, 0.14281, 0.15864, 0.17739, 0.19034},
+            {0.12413, 0.14181, 0.15755, 0.17618, 0.18903},
+            {0.12329, 0.14087, 0.15649, 0.17498, 0.18776},
+            {0.12247, 0.13993, 0.15544, 0.17382, 0.18650},
+            {0.12167, 0.13901, 0.15442, 0.17268, 0.18528},
+            {0.12088, 0.13811, 0.15342, 0.17155, 0.18408},
+            {0.12011, 0.13723, 0.15244, 0.17045, 0.18290},
+            {0.11935, 0.13636, 0.15147, 0.16938, 0.18174},
+            {0.11860, 0.13551, 0.15052, 0.16832, 0.18060},
+            {0.11787, 0.13467, 0.14960, 0.16728, 0.17949},
+            {0.11716, 0.13385, 0.14868, 0.16626, 0.17732},
+            {0.11645, 0.13305, 0.14779, 0.16526, 0.17732},
+            {0.11576, 0.13226, 0.14691, 0.16428, 0.17627},
+            {0.11508, 0.13148, 0.14605, 0.16331, 0.17523},
+            {0.11442, 0.13072, 0.14520, 0.16236, 0.17421},
+            {0.11376, 0.12997, 0.14437, 0.16143, 0.17321},
+            {0.11311, 0.12923, 0.14355, 0.16051, 0.17223},
+            {0.11248, 0.12850, 0.14274, 0.15961, 0.17126},
+            {0.11186, 0.12779, 0.14195, 0.15873, 0.17031},
+            {0.11125, 0.12709, 0.14117, 0.15786, 0.16938},
+            {0.11064, 0.12640, 0.14040, 0.15700, 0.16846},
+            {0.11005, 0.12572, 0.13965, 0.15616, 0.16755},
+            {0.10947, 0.12506, 0.13891, 0.15533, 0.16666},
+            {0.10889, 0.12440, 0.13818, 0.15451, 0.16579},
+            {0.10833, 0.12375, 0.13746, 0.15371, 0.16493},
+            {0.10777, 0.12312, 0.13675, 0.15291, 0.16408},
+            {0.10722, 0.12249, 0.13606, 0.15214, 0.16324},
+            {0.10668, 0.12187, 0.13537, 0.15137, 0.16242},
+            {0.10615, 0.12126, 0.13469, 0.15061, 0.16161},
+            {0.10563, 0.12067, 0.13403, 0.14987, 0.16081}
+    };
 
     @FXML
-    private final List<TextField> polaCzasow = new ArrayList<>();
+    private TextField objectNumberField;
 
     @FXML
-    private TextField txtAlfa;
+    private final List<TextField> timeFields = new ArrayList<>();
 
     @FXML
-    private GridPane gridCzasy;
+    private TextField alphaField;
 
     @FXML
-    private Label lblWynik;
+    private GridPane timePane;
+
+    @FXML
+    private Label resultsLabel;
 
     @FXML
     protected void onNumberChange() {
-        gridCzasy.getChildren().clear();
-        polaCzasow.clear();
+        timePane.getChildren().clear();
+        timeFields.clear();
 
         try {
-            int r = Integer.parseInt(txtLiczbaObiektow.getText().trim());
+            int r = Integer.parseInt(objectNumberField.getText().trim());
             if (r <= 0) return;
 
             int cols = 3; // liczba pól w jednym wierszu
@@ -81,8 +184,8 @@ public class Controller {
                 int row = i / cols;
                 int col = i % cols;
 
-                gridCzasy.add(tf, col, row);
-                polaCzasow.add(tf);
+                timePane.add(tf, col, row);
+                timeFields.add(tf);
             }
         } catch (NumberFormatException e) {
             // ignoruj błędy wpisywania
@@ -92,41 +195,41 @@ public class Controller {
     @FXML
     protected void onClick() {
         try {
-            int r = Integer.parseInt(txtLiczbaObiektow.getText().trim());
-            double alfa = Double.parseDouble(txtAlfa.getText().trim());
-            List<Double> czasy = new ArrayList<>();
+            int r = Integer.parseInt(objectNumberField.getText().trim());
+            double alpha = Double.parseDouble(alphaField.getText().trim());
+            List<Double> times = new ArrayList<>();
             //Wczytywanie i sortowanie czasów naprawy
-            for (TextField czas : polaCzasow) {
-                czasy.add(Double.valueOf(czas.getText()));
+            for (TextField czas : timeFields) {
+                times.add(Double.valueOf(czas.getText()));
             }
 
-            czasy.sort(Double::compareTo);
+            times.sort(Double::compareTo);
 
             //Obliczanie s*, tn*, s^2, s, tn
-            double srednia = czasy.stream().mapToDouble(Double::doubleValue).average().orElse(0);
-            double odchylenie = Math.sqrt(czasy.stream().mapToDouble(t -> Math.pow(t - srednia, 2)).sum() / (czasy.size() - 1));
+            double mean = times.stream().mapToDouble(Double::doubleValue).average().orElse(0);
+            double deviation = Math.sqrt(times.stream().mapToDouble(t -> Math.pow(t - mean, 2)).sum() / (times.size() - 1));
 
-            double s2 = Math.log(Math.pow((odchylenie / srednia), 2) + 1);
+            double s2 = Math.log(Math.pow((deviation / mean), 2) + 1);
             double s = Math.sqrt(s2);
-            double tsrednie = srednia / Math.exp(0.5 * s2); // ~tn = srednia / exp(1/2*s^2)
+            double meanT = mean / Math.exp(0.5 * s2); // ~tn = srednia / exp(1/2*s^2)
 
-            System.out.println("alfa=" + alfa + " tn*=" + srednia + " s*=" + odchylenie + " s^2=" + s2 + " ~tn=" + tsrednie + ", s =" + s);
+            System.out.println("alfa=" + alpha + " tn*=" + mean + " s*=" + deviation + " s^2=" + s2 + " ~tn=" + meanT + ", s =" + s);
 
             //Wyznaczanie  F*, u(i) oraz FH
             List<Double> femp = new ArrayList<>();
-            List<Double> fteor = new ArrayList<>();
+            List<Double> ftheor = new ArrayList<>();
 
             for (int i = 0; i < r; i++) {
-                double t = czasy.get(i);
+                double t = times.get(i);
 
-                long count = czasy.stream().filter(x -> x <= t).count();
+                long count = times.stream().filter(x -> x <= t).count();
                 double f = (double) count / r;
 
-                double u = (Math.log(t / tsrednie)) / s;
+                double u = (Math.log(t / meanT)) / s;
                 double fh = standardNormalCDF(u);
 
                 femp.add(f);
-                fteor.add(fh);
+                ftheor.add(fh);
 
                 System.out.printf("tn(%d)=%.2f, r[tn]=%d, F* = %.3f, u = %.3f, fh = %.5f %n", i + 1, t, count, f, u, fh);
             }
@@ -134,53 +237,45 @@ public class Controller {
 
             double dr = 0.0;
             for (int i = 0; i < r; i++) {
-                dr = Math.max(dr, Math.abs(femp.get(i) - fteor.get(i)));
+                dr = Math.max(dr, Math.abs(femp.get(i) - ftheor.get(i)));
             }
 
+            System.out.println("WYNIK: " + dr);
+            System.out.println("PORÓWNANIE: " + quantileTableSearch(r, alpha));
 
-
-
-            //Wartość krytyczna dla testu KS ---
-            //double dKryt = kolmogorowKryt(r, alfa);
-
-            //Wypisz wynik ---
-            String wynik = String.format("dr = %.4f", dr);
-
-            /*if (dr < dKryt) {
-                wynik.append("Czas napraw obiektu jest zgodny z rozkładem logarytmo-normalnym.");
+            if (dr < quantileTableSearch(r, alpha)) {
+                resultsLabel.setText("Czas napraw obiektu jest zgodny z rozkładem logarytmo-normalnym.");
             } else {
-                wynik.append("Czas napraw obiektu nie jest zgodny z rozkładem logarytmo-normalnym.");
-            }*/
-
-            lblWynik.setText(wynik);
+                resultsLabel.setText("Czas napraw obiektu nie jest zgodny z rozkładem logarytmo-normalnym.");
+            }
 
         } catch (NumberFormatException exception) {
-            lblWynik.setText("Niepoprawne dane lub brak danych");
+            resultsLabel.setText("Niepoprawne dane lub brak danych");
         } catch (Exception ex) {
-            lblWynik.setText("Błąd danych wejściowych: " + ex);
+            resultsLabel.setText("Błąd danych wejściowych: ");
         }
     }
 
     private double firstTableSearch(double u, double pom){
-        int kolumna;
-        int wiersz;
+        int col;
+        int row;
 
-        wiersz = (int) (pom * 10);
-        kolumna = (int) ((pom * 100) % 10);
+        row = (int) (pom * 10);
+        col = (int) ((pom * 100) % 10);
         if(u < 0){
-            return 1 - N01_TABLE[wiersz][kolumna];
+            return 1 - N01_TABLE[row][col];
         } else {
-            return N01_TABLE[wiersz][kolumna];
+            return N01_TABLE[row][col];
         }
     }
 
     private double secondTableSearch(double u, double pom){
-        int kolumna;
-        int wiersz;
+        int col;
+        int row;
 
-        wiersz = (int) ((pom - 2) * 10);
-        kolumna = (int) ((pom * 100) % 10);
-        if(kolumna != 0){
+        row = (int) ((pom - 2) * 10);
+        col = (int) ((pom * 100) % 10);
+        if(col != 0){
             if(pom < 2.32){
                 return 0.02;
             }
@@ -189,32 +284,32 @@ public class Controller {
         }
 
         if(u < 0){
-            return 1 - N02_TABLE[wiersz][kolumna];
+            return 1 - N02_TABLE[row][col];
         } else {
-            return N02_TABLE[wiersz][kolumna];
+            return N02_TABLE[row][col];
         }
     }
 
     private double thirdTableSearch(double u, double pom){
-        int kolumna;
-        int wiersz;
+        int col;
+        int row;
 
-        wiersz = (int) Math.floor((pom - 3.0) * 2);
-        kolumna = (int) ((pom * 100) % 10);
-        if (kolumna != 0) {
-            double[] progi = {3.09, 3.72, 4.27, 4.75, 5.2, 5.61, 6.00, 6.36, 6.71};
-            double[] wartosci = {0.01, 0.001, 0.0001, 0.00001, 0.000001, 0.0000001, 0.00000001, 0.000000001, 0.0000000001};
+        row = (int) Math.floor((pom - 3.0) * 2);
+        col = (int) ((pom * 100) % 10);
+        if (col != 0) {
+            double[] thresholds = {3.09, 3.72, 4.27, 4.75, 5.2, 5.61, 6.00, 6.36, 6.71};
+            double[] values = {0.01, 0.001, 0.0001, 0.00001, 0.000001, 0.0000001, 0.00000001, 0.000000001, 0.0000000001};
 
-            for (int i = 0; i < progi.length; i++) {
-                if (pom < progi[i]) return wartosci[i];
+            for (int i = 0; i < thresholds.length; i++) {
+                if (pom < thresholds[i]) return values[i];
             }
             return 0.00000000001;
         }
 
         if(u < 0){
-            return 1 - N03_TABLE[wiersz][kolumna];
+            return 1 - N03_TABLE[row][col];
         } else {
-            return N03_TABLE[wiersz][kolumna];
+            return N03_TABLE[row][col];
         }
     }
 
@@ -235,5 +330,22 @@ public class Controller {
         }
 
         return -1;
+    }
+
+    private double quantileTableSearch(int r, double alpha) {
+        Map<Double, Integer> mapa = Map.of(
+                0.2, 0,
+                0.1, 1,
+                0.05, 2,
+                0.02, 3,
+                0.01, 4
+        );
+
+        Integer column = mapa.get(alpha);
+        if (column == null) {
+            throw new IllegalArgumentException("błędna istotność - " + alpha);
+        }
+
+        return QUANTILE_TABLE[r - 1][column];
     }
 }

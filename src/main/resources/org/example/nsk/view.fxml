@@ -17,7 +17,7 @@
     <Label text="Liczba obiektów:"
            GridPane.rowIndex="0" GridPane.columnIndex="0"
            style="-fx-text-fill: #D3DAD9; -fx-font-size: 16px;"/>
-    <TextField fx:id="txtLiczbaObiektow"
+    <TextField fx:id="objectNumberField"
                promptText="np. 5"
                onKeyReleased="#onNumberChange"
                prefWidth="250"
@@ -34,7 +34,7 @@
                 GridPane.rowIndex="1" GridPane.columnIndex="1"
                 hbarPolicy="NEVER">
 
-        <GridPane fx:id="gridCzasy"
+        <GridPane fx:id="timePane"
                   hgap="5" vgap="5"
                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
     </ScrollPane>
@@ -42,19 +42,19 @@
     <Label text="Poziom istotności (α):"
            GridPane.rowIndex="2" GridPane.columnIndex="0"
            style="-fx-text-fill: #D3DAD9; -fx-font-size: 16px;"/>
-    <TextField fx:id="txtAlfa" promptText="np. 0.05"
+    <TextField fx:id="alphaField" promptText="np. 0.05"
                prefWidth="250"
                style="-fx-background-color: #334756; -fx-text-fill: white; -fx-font-size: 14px;"
                styleClass="form-control"
                GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-    <Button text="Zatwierdź"
+    <Button text="Oblicz"
             onAction="#onClick"
             styleClass="btn btn-success"
             style="-fx-font-size: 14px;"
             GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
-    <Label fx:id="lblWynik" text="Wynik testu pojawi się tutaj"
+    <Label fx:id="resultsLabel" text="Wynik testu pojawi się tutaj"
            wrapText="true"
            styleClass="alert alert-info mt-3"
            style="-fx-text-fill: #D3DAD9; -fx-font-size: 15px;"

@@ -1,9 +1,18 @@
 package org.example.nsk;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import com.lowagie.text.Document;
+import com.lowagie.text.Font;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfWriter;
+
+import javafx.stage.FileChooser;
+import java.io.File;
+import java.io.FileOutputStream;
 
 import java.util.*;
 
@@ -166,6 +175,13 @@ public class Controller {
     private Label resultsLabel;
 
     @FXML
+    private Button savePdfButton;
+
+    private boolean error = false;
+    private double result;
+    private double compare;
+
+    @FXML
     protected void onNumberChange() {
         timePane.getChildren().clear();
         timeFields.clear();
@@ -173,8 +189,9 @@ public class Controller {
         try {
             int r = Integer.parseInt(objectNumberField.getText().trim());
             if (r <= 0) return;
+            if (r > 99) return;
 
-            int cols = 3; // liczba pól w jednym wierszu
+            int cols = 3;
             for (int i = 0; i < r; i++) {
                 TextField tf = new TextField();
                 tf.setPromptText("Czas #" + (i + 1));
@@ -188,7 +205,7 @@ public class Controller {
                 timeFields.add(tf);
             }
         } catch (NumberFormatException e) {
-            // ignoruj błędy wpisywania
+            error = true;
         }
     }
 
@@ -198,24 +215,24 @@ public class Controller {
             int r = Integer.parseInt(objectNumberField.getText().trim());
             double alpha = Double.parseDouble(alphaField.getText().trim());
             List<Double> times = new ArrayList<>();
-            //Wczytywanie i sortowanie czasów naprawy
+
             for (TextField czas : timeFields) {
                 times.add(Double.valueOf(czas.getText()));
             }
 
             times.sort(Double::compareTo);
 
-            //Obliczanie s*, tn*, s^2, s, tn
+
             double mean = times.stream().mapToDouble(Double::doubleValue).average().orElse(0);
             double deviation = Math.sqrt(times.stream().mapToDouble(t -> Math.pow(t - mean, 2)).sum() / (times.size() - 1));
 
             double s2 = Math.log(Math.pow((deviation / mean), 2) + 1);
             double s = Math.sqrt(s2);
-            double meanT = mean / Math.exp(0.5 * s2); // ~tn = srednia / exp(1/2*s^2)
+            double meanT = mean / Math.exp(0.5 * s2);
 
             System.out.println("alfa=" + alpha + " tn*=" + mean + " s*=" + deviation + " s^2=" + s2 + " ~tn=" + meanT + ", s =" + s);
 
-            //Wyznaczanie  F*, u(i) oraz FH
+
             List<Double> femp = new ArrayList<>();
             List<Double> ftheor = new ArrayList<>();
 
@@ -240,19 +257,69 @@ public class Controller {
                 dr = Math.max(dr, Math.abs(femp.get(i) - ftheor.get(i)));
             }
 
-            System.out.println("WYNIK: " + dr);
-            System.out.println("PORÓWNANIE: " + quantileTableSearch(r, alpha));
+            double qtValue = quantileTableSearch(r, alpha);
 
-            if (dr < quantileTableSearch(r, alpha)) {
-                resultsLabel.setText("Czas napraw obiektu jest zgodny z rozkładem logarytmo-normalnym.");
+            if (dr < qtValue) {
+                error = false;
+                result = dr;
+                compare = qtValue;
+                resultsLabel.setText("\nRozkład empiryczny: " + String.format("%.5f", dr)
+                            + "\nRozkład logarytmo-normalny: " + qtValue
+                            + "\n\nNie ma podstaw do odrzucenia hipotezy, że rozkład czasu naprawy jest zgodny z rozkładem logarytmo-normalnym.");
             } else {
-                resultsLabel.setText("Czas napraw obiektu nie jest zgodny z rozkładem logarytmo-normalnym.");
+                error = false;
+                result = dr;
+                compare = qtValue;
+                resultsLabel.setText("\nRozkład empiryczny: " + dr
+                        + "\nRozkład logarytmo-normalny: " + qtValue
+                        + "\n\nSą podstawy do odrzucenia hipotezy, że rozkład czasu naprawy jest zgodny z rozkładem logarytmo-normalnym.");
             }
 
         } catch (NumberFormatException exception) {
             resultsLabel.setText("Niepoprawne dane lub brak danych");
+            error = true;
         } catch (Exception ex) {
-            resultsLabel.setText("Błąd danych wejściowych: ");
+            resultsLabel.setText("Błąd danych wejściowych");
+            error = true;
+        }
+
+
+        savePdfButton.setDisable(error);
+    }
+
+    @FXML
+    protected void onSavePdf() {
+        try {
+            String text = resultsLabel.getText();
+
+            if (text == null || text.isBlank()) {
+                resultsLabel.setText("Brak wyniku do zapisania.");
+                return;
+            }
+
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Zapisz wynik do PDF");
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Plik PDF", "*.pdf")
+            );
+            fileChooser.setInitialFileName("wynik.pdf");
+
+            File file = fileChooser.showSaveDialog(resultsLabel.getScene().getWindow());
+            if (file == null) return;
+
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream(file));
+            document.open();
+
+            Font font = new Font(Font.HELVETICA, 12);
+            document.add(new Paragraph("Wynik testu:\n\n", font));
+            document.add(new Paragraph(text, font));
+
+            document.close();
+
+        } catch (Exception e) {
+            resultsLabel.setText("Błąd podczas zapisu PDF");
+            e.printStackTrace();
         }
     }
 
@@ -313,7 +380,6 @@ public class Controller {
         }
     }
 
-    //Wybieranie dystrybuanty z tablicy
     private double standardNormalCDF(double u) {
         double pom = Math.abs(u);
 

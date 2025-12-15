@@ -4,6 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.GridPane?>
 
+<?import javafx.scene.layout.HBox?>
 <GridPane fx:controller="org.example.nsk.Controller"
           xmlns:fx="http://javafx.com/fxml"
           alignment="CENTER"
@@ -48,14 +49,27 @@
                styleClass="form-control"
                GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-    <Button text="Oblicz"
-            onAction="#onClick"
-            styleClass="btn btn-success"
-            style="-fx-font-size: 14px;"
-            GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+    <HBox spacing="10"
+          GridPane.rowIndex="3"
+          GridPane.columnIndex="1"
+          alignment="CENTER_LEFT">
 
-    <Label fx:id="resultsLabel" text="Wynik testu pojawi się tutaj"
+        <Button text="Oblicz"
+                onAction="#onClick"
+                styleClass="btn btn-success"
+                style="-fx-font-size: 14px;"/>
+
+        <Button fx:id="savePdfButton"
+                text="Zapisz PDF"
+                onAction="#onSavePdf"
+                styleClass="btn btn-secondary"
+                style="-fx-font-size: 14px;"
+                disable="true"/>
+    </HBox>
+
+    <Label fx:id="resultsLabel"
            wrapText="true"
+           maxWidth="400"
            styleClass="alert alert-info mt-3"
            style="-fx-text-fill: #D3DAD9; -fx-font-size: 15px;"
            GridPane.rowIndex="4" GridPane.columnIndex="0" GridPane.columnSpan="2"/>

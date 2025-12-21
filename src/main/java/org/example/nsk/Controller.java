@@ -180,6 +180,9 @@ public class Controller {
     private boolean error = false;
     private double result;
     private double compare;
+    private int r;
+    private double alpha;
+    private List<Double> times;
 
     @FXML
     protected void onNumberChange() {
@@ -212,9 +215,9 @@ public class Controller {
     @FXML
     protected void onClick() {
         try {
-            int r = Integer.parseInt(objectNumberField.getText().trim());
-            double alpha = Double.parseDouble(alphaField.getText().trim());
-            List<Double> times = new ArrayList<>();
+            r = Integer.parseInt(objectNumberField.getText().trim());
+            alpha = Double.parseDouble(alphaField.getText().trim());
+            times = new ArrayList<>();
 
             for (TextField czas : timeFields) {
                 times.add(Double.valueOf(czas.getText()));
@@ -290,6 +293,7 @@ public class Controller {
     @FXML
     protected void onSavePdf() {
         try {
+            String input = "Liczba obiektów: " + r + "\nCzasy naprawy: " + times + "\nPoziom istotności: " + alpha;
             String text = resultsLabel.getText();
 
             if (text == null || text.isBlank()) {
@@ -312,7 +316,10 @@ public class Controller {
             document.open();
 
             Font font = new Font(Font.HELVETICA, 12);
-            document.add(new Paragraph("Wynik testu:\n\n", font));
+            document.add(new Paragraph("Wprowadzone dane:\n\n", font));
+            document.add(new Paragraph(input + "\n\n", font));
+
+            document.add(new Paragraph("Wynik testu: ", font));
             document.add(new Paragraph(text, font));
 
             document.close();
